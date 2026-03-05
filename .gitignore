@@ -1,0 +1,10 @@
+__pycache__/
+*.pyc
+
+# Local outputs
+charts/
+*.docx
+*.pdf
+
+# OS
+.DS_Store
