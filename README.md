@@ -93,3 +93,59 @@ If the key changes, update `API_KEY` in:
 ## 7) Environment notes
 - Scripts use relative paths and can run from any machine.
 - Recommended Python version: 3.10 or newer.
+
+## 8) Python file catalog
+
+| Python file | What it does | Main input CSVs | Main outputs |
+|---|---|---|---|
+| `analysis_lead_magnet.py` | Lead magnet core analysis (pre/post opens + Group A vs B engagement) | `Emails Broadcasting - broadcasts_categorised.csv`, `AI Sprint Roadmap - Opened subscribers.csv`, `AI Sprint Roadmap - Clicked.csv` | `lead_magnet_stats.csv`, `lead_magnet_post_survey_events.csv`, `lead_magnet_post_survey_summary.csv`, lead-magnet charts |
+| `analysis_group_ab_monthly.py` | Monthly evolution of Group A vs B (Value OR, Sales OR, Sales CTOR) | `AI Sprint Roadmap - Opened subscribers.csv`, `AI Sprint Roadmap - Clicked.csv`, `Emails Broadcasting - broadcasts_categorised.csv` | `lead_magnet_broadcast_mapping.csv`, `lead_magnet_group_ab_monthly.csv`, charts `AC/AD/AE` |
+| `analysis_lead_magnet_origin_post.py` | Origin analysis: strict lead-magnet signups vs other cohorts | `Confirmed Subscribers.csv`, `lead_magnet_post_survey_events.csv`, `lead_magnet_broadcast_mapping.csv` | `lead_magnet_origin_post_survey_events.csv`, `lead_magnet_origin_post_survey_summary.csv`, `lead_magnet_prepost_window_summary.csv`, `lead_magnet_postwindow_nonlead_summary.csv`, chart `AD2` |
+| `analysis_signup_cohort_evolution.py` | Open/CTOR evolution by signup-age cohorts (old vs new) | `all_subscribers_created_at.csv` (cache), `lead_magnet_broadcast_mapping.csv` | `signup_cohort_monthly_evolution.csv`, `signup_cohort_failed_ids.csv`, charts `AL/AM/AN` |
+| `analysis_bootcamp_buyers.py` | Buyers vs non-buyers over time (OR/CTOR + age profile) | `Confirmed Subscribers.csv`, `lead_magnet_broadcast_mapping.csv` | `bootcamp_buyers_monthly_evolution.csv`, `bootcamp_buyers_summary.csv`, `bootcamp_buyers_age_buckets.csv`, `bootcamp_buyers_failed_ids.csv`, charts `AO/AP` |
+| `fetch_cold_engagement.py` | Calls Kit API to enrich cold subscribers with engagement stats | `Cold Subscribers.csv` | `cold_engagement.csv` |
+| `analysis_cold_engagement.py` | Analysis/charts of cold-subscriber engagement behavior | `cold_engagement.csv` | cold engagement charts |
+| `analysis_cold_subscribers.py` | Analysis/charts of cold-subscriber age/source composition | `Cold Subscribers.csv` | cold subscriber charts |
+| `analysis_sales_vs_value.py` | Sales vs Value category trend analysis | `Emails Broadcasting - broadcasts_categorised.csv` | category trend charts |
+| `analysis_phase_lifespan.py` | Unsubscribe lifespan by phase analysis | `export (22).csv` | phase-lifespan charts |
+| `generate_report_v3.py` | Builds final Word report and some report-only derived tables | multiple raw + generated CSVs above | `Email_Health_Analysis_Report.docx` (optional), `bootcamp_conversion_latency*.csv`, `sales_intent_outcomes_per_email.csv`, report charts |
+
+## 9) CSV file catalog
+
+### Raw input CSVs
+
+| CSV file | What it includes | Used by script(s) / task |
+|---|---|---|
+| `AI Sprint Roadmap - Clicked.csv` | Subscribers who clicked the lead-magnet email | `analysis_lead_magnet.py`, `analysis_group_ab_monthly.py`, `generate_report_v3.py` |
+| `AI Sprint Roadmap - Opened subscribers.csv` | Subscribers who opened the lead-magnet email | `analysis_lead_magnet.py`, `analysis_group_ab_monthly.py`, `generate_report_v3.py` |
+| `Cold Subscribers.csv` | Subscribers identified as cold/inactive | `fetch_cold_engagement.py`, `analysis_cold_subscribers.py` |
+| `Confirmed Subscribers.csv` | Full confirmed subscriber list (email, tags, created date, referrer, etc.) | `analysis_bootcamp_buyers.py`, `analysis_lead_magnet_origin_post.py`, `generate_report_v3.py` |
+| `Emails Broadcasting - broadcasts_categorised.csv` | Broadcast-level email performance with Value/Sales category labels | `analysis_lead_magnet.py`, `analysis_group_ab_monthly.py`, `analysis_sales_vs_value.py`, `generate_report_v3.py` |
+| `Workshops Pre-bootcamps - Sheet1.csv` | Workshop-to-bootcamp mapping tags by cohort | `generate_report_v3.py` |
+| `export (22).csv` | Subscriber lifecycle export used for churn/lifespan phase analysis | `analysis_phase_lifespan.py` |
+
+### Generated / intermediate CSVs
+
+| CSV file | What it includes | Produced by | Used by |
+|---|---|---|---|
+| `all_subscribers_created_at.csv` | Subscriber cache from Kit API (id, email, status, created date) | `analysis_signup_cohort_evolution.py` | `analysis_signup_cohort_evolution.py` |
+| `bootcamp_buyers_age_buckets.csv` | Buyer/non-buyer age-bucket counts and shares | `analysis_bootcamp_buyers.py` | `generate_report_v3.py` |
+| `bootcamp_buyers_failed_ids.csv` | Broadcast IDs that failed API filtering in buyer analysis | `analysis_bootcamp_buyers.py` | `generate_report_v3.py` |
+| `bootcamp_buyers_monthly_evolution.csv` | Monthly OR/CTOR by buyer vs non-buyer segment | `analysis_bootcamp_buyers.py` | `generate_report_v3.py` |
+| `bootcamp_buyers_summary.csv` | Overall buyer vs non-buyer benchmark metrics | `analysis_bootcamp_buyers.py` | `generate_report_v3.py` |
+| `bootcamp_conversion_latency.csv` | Days from signup to first bootcamp purchase per buyer | `generate_report_v3.py` | `generate_report_v3.py` |
+| `bootcamp_conversion_latency_by_cohort.csv` | Conversion latency aggregated by first purchase cohort | `generate_report_v3.py` | `generate_report_v3.py` |
+| `cold_engagement.csv` | Cold subscriber engagement stats from Kit API | `fetch_cold_engagement.py` | `analysis_cold_engagement.py` |
+| `failed_broadcasts_filter500.csv` | Diagnostic list of broadcasts with API filter 500 failures | manual/diagnostic artifact | reference only |
+| `lead_magnet_broadcast_mapping.csv` | Mapped broadcast IDs for categorized emails | `analysis_group_ab_monthly.py` | `analysis_signup_cohort_evolution.py`, `analysis_bootcamp_buyers.py`, `analysis_lead_magnet_origin_post.py`, `generate_report_v3.py` |
+| `lead_magnet_group_ab_monthly.csv` | Monthly Value OR / Sales OR / Sales CTOR for Group A vs B | `analysis_group_ab_monthly.py` | `generate_report_v3.py` |
+| `lead_magnet_origin_post_survey_events.csv` | Per-broadcast event table for strict lead-magnet origin analysis | `analysis_lead_magnet_origin_post.py` | reference / QA |
+| `lead_magnet_origin_post_survey_summary.csv` | Summary metrics for lead-magnet-origin vs pre-signup cohort (same post broadcasts) | `analysis_lead_magnet_origin_post.py` | `generate_report_v3.py` |
+| `lead_magnet_post_survey_events.csv` | Post-survey matched broadcast event table | `analysis_lead_magnet.py` | `analysis_lead_magnet_origin_post.py` |
+| `lead_magnet_post_survey_summary.csv` | Group A vs B post-survey email-type summary | `analysis_lead_magnet.py` | `generate_report_v3.py` |
+| `lead_magnet_postwindow_nonlead_summary.csv` | Lead-magnet signups vs non-lead signups in same post window | `analysis_lead_magnet_origin_post.py` | `generate_report_v3.py` |
+| `lead_magnet_prepost_window_summary.csv` | As-received comparison: pre-window cohort vs post-window lead cohort | `analysis_lead_magnet_origin_post.py` | `generate_report_v3.py` |
+| `lead_magnet_stats.csv` | Subscriber-level enriched stats for Group A/B analysis | `analysis_lead_magnet.py` | `analysis_lead_magnet.py`, `generate_report_v3.py` |
+| `sales_intent_outcomes_per_email.csv` | Sales intent/action diagnostics per sales broadcast | `generate_report_v3.py` | `generate_report_v3.py` |
+| `signup_cohort_failed_ids.csv` | Failed broadcast IDs in signup cohort analysis | `analysis_signup_cohort_evolution.py` | `generate_report_v3.py` |
+| `signup_cohort_monthly_evolution.csv` | Monthly OR/CTOR by signup cohort (Q1–Q4) | `analysis_signup_cohort_evolution.py` | `generate_report_v3.py` |
