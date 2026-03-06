@@ -34,4 +34,4 @@ python3 analysis_sales_vs_value.py
 echo "[10/10] analysis_phase_lifespan.py"
 python3 analysis_phase_lifespan.py
 
-echo "Done. Optional report generation: python3 generate_report_v3.py"
+echo "Done. Outputs are ready in charts/ and data/generated/."
