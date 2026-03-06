@@ -25,6 +25,7 @@ import warnings
 warnings.filterwarnings("ignore")
 
 BASE = Path(__file__).resolve().parent
+GENERATED = BASE / "data" / "generated"
 OUT  = BASE / "charts"
 OUT.mkdir(exist_ok=True)
 
@@ -49,7 +50,7 @@ plt.rcParams.update({
 })
 
 # ── Load ──────────────────────────────────────────────────────────────────────
-df = pd.read_csv(BASE / "cold_engagement.csv")
+df = pd.read_csv(GENERATED / "cold_engagement.csv")
 df["created_at"] = pd.to_datetime(df["created_at"], utc=True, errors="coerce").dt.tz_localize(None)
 df["last_opened"] = pd.to_datetime(df["last_opened"], utc=True, errors="coerce").dt.tz_localize(None)
 df["last_clicked"] = pd.to_datetime(df["last_clicked"], utc=True, errors="coerce").dt.tz_localize(None)

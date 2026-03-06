@@ -17,6 +17,8 @@ import time
 from pathlib import Path
 
 BASE     = Path(__file__).resolve().parent
+GENERATED = BASE / "data" / "generated"
+GENERATED.mkdir(parents=True, exist_ok=True)
 API_KEY  = "kit_7d6b10fad06f88e1d0e47e45ef92e9cc"
 API_BASE = "https://api.kit.com/v4"
 HEADERS  = {"X-Kit-Api-Key": API_KEY, "Accept": "application/json"}
@@ -125,7 +127,7 @@ def enrich(row):
     })
 
 enriched = cold.join(cold.apply(enrich, axis=1))
-enriched.to_csv(BASE / "cold_engagement.csv", index=False)
+enriched.to_csv(GENERATED / "cold_engagement.csv", index=False)
 
 print(f"\nSaved cold_engagement.csv  ({len(enriched):,} rows)")
 print("\nSample stats:")

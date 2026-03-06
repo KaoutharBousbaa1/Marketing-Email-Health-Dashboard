@@ -36,6 +36,8 @@ from scipy import stats as scipy_stats
 
 
 BASE = Path(__file__).resolve().parent
+GENERATED = BASE / "data" / "generated"
+GENERATED.mkdir(parents=True, exist_ok=True)
 OUT = BASE / "charts"
 OUT.mkdir(exist_ok=True)
 
@@ -51,13 +53,13 @@ SURVEY_DATE = pd.Timestamp("2026-01-25")
 SURVEY_WINDOW_END = pd.Timestamp("2026-03-02")
 PRE_SURVEY_WINDOW_DAYS = 38
 
-POST_EVENTS_FILE = BASE / "lead_magnet_post_survey_events.csv"
-OUT_EVENTS = BASE / "lead_magnet_origin_post_survey_events.csv"
-OUT_SUMMARY = BASE / "lead_magnet_origin_post_survey_summary.csv"
-OUT_PREPOST_SUMMARY = BASE / "lead_magnet_prepost_window_summary.csv"
-OUT_POSTWINDOW_NONLEAD_SUMMARY = BASE / "lead_magnet_postwindow_nonlead_summary.csv"
+POST_EVENTS_FILE = GENERATED / "lead_magnet_post_survey_events.csv"
+OUT_EVENTS = GENERATED / "lead_magnet_origin_post_survey_events.csv"
+OUT_SUMMARY = GENERATED / "lead_magnet_origin_post_survey_summary.csv"
+OUT_PREPOST_SUMMARY = GENERATED / "lead_magnet_prepost_window_summary.csv"
+OUT_POSTWINDOW_NONLEAD_SUMMARY = GENERATED / "lead_magnet_postwindow_nonlead_summary.csv"
 OUT_CHART = OUT / "AD2_lead_magnet_origin_metrics.png"
-BROADCAST_MAP_FILE = BASE / "lead_magnet_broadcast_mapping.csv"
+BROADCAST_MAP_FILE = GENERATED / "lead_magnet_broadcast_mapping.csv"
 
 RESPONSE_KEYWORDS = ["i want", "i'm", "i work at a company", "i own/run", "i own", "i'm building"]
 ROADMAP_REFERRERS = {"lonelyoctopus.com/ai-sprint-roadmap"}

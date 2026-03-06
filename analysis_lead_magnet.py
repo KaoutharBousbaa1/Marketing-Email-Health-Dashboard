@@ -34,6 +34,8 @@ warnings.filterwarnings("ignore")
 
 # ─── Constants ───────────────────────────────────────────────────────────────
 BASE        = Path(__file__).resolve().parent
+GENERATED   = BASE / "data" / "generated"
+GENERATED.mkdir(parents=True, exist_ok=True)
 OUT         = BASE / "charts"
 OUT.mkdir(exist_ok=True)
 
@@ -42,9 +44,9 @@ API_BASE    = "https://api.kit.com/v4"
 HEADERS     = {"X-Kit-Api-Key": API_KEY, "Accept": "application/json"}
 
 SURVEY_DATE = pd.Timestamp("2026-01-25")
-CACHE_FILE  = BASE / "lead_magnet_stats.csv"
-POST_EVENTS_CACHE = BASE / "lead_magnet_post_survey_events.csv"
-POST_SUMMARY_CACHE = BASE / "lead_magnet_post_survey_summary.csv"
+CACHE_FILE  = GENERATED / "lead_magnet_stats.csv"
+POST_EVENTS_CACHE = GENERATED / "lead_magnet_post_survey_events.csv"
+POST_SUMMARY_CACHE = GENERATED / "lead_magnet_post_survey_summary.csv"
 
 GREEN  = "#10B981"
 ORANGE = "#F59E0B"

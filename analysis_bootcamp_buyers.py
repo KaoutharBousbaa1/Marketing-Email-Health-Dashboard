@@ -41,16 +41,18 @@ import requests
 
 # ─── Paths / constants ────────────────────────────────────────────────────────
 BASE = Path(__file__).resolve().parent
+GENERATED = BASE / "data" / "generated"
+GENERATED.mkdir(parents=True, exist_ok=True)
 OUT = BASE / "charts"
 OUT.mkdir(exist_ok=True)
 
 CONFIRMED_FILE = BASE / "Confirmed Subscribers.csv"
-MAPPING_FILE = BASE / "lead_magnet_broadcast_mapping.csv"
+MAPPING_FILE = GENERATED / "lead_magnet_broadcast_mapping.csv"
 
-OUT_MONTHLY = BASE / "bootcamp_buyers_monthly_evolution.csv"
-OUT_SUMMARY = BASE / "bootcamp_buyers_summary.csv"
-OUT_AGE = BASE / "bootcamp_buyers_age_buckets.csv"
-OUT_FAILED = BASE / "bootcamp_buyers_failed_ids.csv"
+OUT_MONTHLY = GENERATED / "bootcamp_buyers_monthly_evolution.csv"
+OUT_SUMMARY = GENERATED / "bootcamp_buyers_summary.csv"
+OUT_AGE = GENERATED / "bootcamp_buyers_age_buckets.csv"
+OUT_FAILED = GENERATED / "bootcamp_buyers_failed_ids.csv"
 
 CHART_MONTHLY = OUT / "AO_bootcamp_buyers_monthly_or_ctor.png"
 CHART_AGE = OUT / "AP_bootcamp_buyers_age_profile.png"

@@ -26,6 +26,8 @@ import pandas as pd
 import requests
 
 BASE = Path(__file__).resolve().parent
+GENERATED = BASE / "data" / "generated"
+GENERATED.mkdir(parents=True, exist_ok=True)
 OUT = BASE / "charts"
 OUT.mkdir(exist_ok=True)
 
@@ -37,10 +39,10 @@ HEADERS = {
     "Content-Type": "application/json",
 }
 
-MAPPING_FILE = BASE / "lead_magnet_broadcast_mapping.csv"
-SUB_CACHE = BASE / "all_subscribers_created_at.csv"
-OUT_MONTHLY = BASE / "signup_cohort_monthly_evolution.csv"
-OUT_FAILED = BASE / "signup_cohort_failed_ids.csv"
+MAPPING_FILE = GENERATED / "lead_magnet_broadcast_mapping.csv"
+SUB_CACHE = GENERATED / "all_subscribers_created_at.csv"
+OUT_MONTHLY = GENERATED / "signup_cohort_monthly_evolution.csv"
+OUT_FAILED = GENERATED / "signup_cohort_failed_ids.csv"
 
 CHART_OR = OUT / "AL_signup_cohort_openrate_trend.png"
 CHART_CTOR = OUT / "AM_signup_cohort_ctor_trend.png"

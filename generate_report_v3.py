@@ -15,6 +15,8 @@ import numpy as np
 from scipy import stats as scipy_stats
 
 BASE   = Path(__file__).resolve().parent
+GENERATED = BASE / "data" / "generated"
+GENERATED.mkdir(parents=True, exist_ok=True)
 CHARTS = BASE / "charts"
 
 doc = Document()
@@ -1235,7 +1237,7 @@ if _confirmed_path.exists():
     if len(_lat):
         _neg_n = int((_lat["days_to_first_purchase"] < 0).sum())
         _lat["days_to_first_purchase_clamped"] = _lat["days_to_first_purchase"].clip(lower=0)
-        _lat.to_csv(BASE / "bootcamp_conversion_latency.csv", index=False)
+        _lat.to_csv(GENERATED / "bootcamp_conversion_latency.csv", index=False)
 
         _lat_valid = _lat[_lat["days_to_first_purchase_clamped"].notna()].copy()
         _p25 = _lat_valid["days_to_first_purchase_clamped"].quantile(0.25)
@@ -1258,7 +1260,7 @@ if _confirmed_path.exists():
             .rename(columns={"count": "n_buyers", "median": "median_days", "mean": "mean_days"})
         )
         _coh = _coh.sort_values("median_days")
-        _coh.to_csv(BASE / "bootcamp_conversion_latency_by_cohort.csv", index=False)
+        _coh.to_csv(GENERATED / "bootcamp_conversion_latency_by_cohort.csv", index=False)
 
         fig, axes = plt.subplots(1, 2, figsize=(13.6, 5.4))
         ax = axes[0]
@@ -1388,16 +1390,16 @@ for cat in ["Value", "Sales"]:
     }
 
 # ── Load Kit API cache for Q2 ────────────────────────────────────────────────
-_cache_path = BASE / "lead_magnet_stats.csv"
-_post_summary_path = BASE / "lead_magnet_post_survey_summary.csv"
+_cache_path = GENERATED / "lead_magnet_stats.csv"
+_post_summary_path = GENERATED / "lead_magnet_post_survey_summary.csv"
 _clicked_path = BASE / "AI Sprint Roadmap - Clicked.csv"
 _opened_path = BASE / "AI Sprint Roadmap - Opened subscribers.csv"
-_monthly_ab_path = BASE / "lead_magnet_group_ab_monthly.csv"
-_cohort_monthly_path = BASE / "signup_cohort_monthly_evolution.csv"
-_buyers_monthly_path = BASE / "bootcamp_buyers_monthly_evolution.csv"
-_buyers_summary_path = BASE / "bootcamp_buyers_summary.csv"
-_buyers_age_path = BASE / "bootcamp_buyers_age_buckets.csv"
-_buyers_failed_path = BASE / "bootcamp_buyers_failed_ids.csv"
+_monthly_ab_path = GENERATED / "lead_magnet_group_ab_monthly.csv"
+_cohort_monthly_path = GENERATED / "signup_cohort_monthly_evolution.csv"
+_buyers_monthly_path = GENERATED / "bootcamp_buyers_monthly_evolution.csv"
+_buyers_summary_path = GENERATED / "bootcamp_buyers_summary.csv"
+_buyers_age_path = GENERATED / "bootcamp_buyers_age_buckets.csv"
+_buyers_failed_path = GENERATED / "bootcamp_buyers_failed_ids.csv"
 _q2_available = _cache_path.exists()
 _q3_available = _post_summary_path.exists()
 _q5_available = _clicked_path.exists() and _opened_path.exists()
@@ -2589,7 +2591,7 @@ if _q7 is not None:
          "versus other channels.",
          color=(50, 50, 50))
 
-    _q7_eng_path = BASE / "lead_magnet_origin_post_survey_summary.csv"
+    _q7_eng_path = GENERATED / "lead_magnet_origin_post_survey_summary.csv"
     if _q7_eng_path.exists():
         _q7e = pd.read_csv(_q7_eng_path)
         _q7e = _q7e[_q7e["metric"].isin(["Value open rate", "Sales open rate", "Sales CTOR"])].copy()
@@ -2665,7 +2667,7 @@ if _q7 is not None:
                  "not just increasing list size.",
                  color=(50, 50, 50))
 
-            _q7_prepost_path = BASE / "lead_magnet_prepost_window_summary.csv"
+            _q7_prepost_path = GENERATED / "lead_magnet_prepost_window_summary.csv"
             if _q7_prepost_path.exists():
                 _pp = pd.read_csv(_q7_prepost_path)
                 _pp = _pp[_pp["metric"].isin(["Value open rate", "Sales open rate", "Sales CTOR"])].copy()
@@ -2727,7 +2729,7 @@ if _q7 is not None:
              "lead_magnet_origin_post_survey_summary.csv and AD2_lead_magnet_origin_metrics.png]",
              color=(200, 0, 0))
 
-    _q7_postwindow_path = BASE / "lead_magnet_postwindow_nonlead_summary.csv"
+    _q7_postwindow_path = GENERATED / "lead_magnet_postwindow_nonlead_summary.csv"
     if _q7_postwindow_path.exists():
         _pw = pd.read_csv(_q7_postwindow_path)
         _pw = _pw[_pw["metric"].isin(["Value open rate", "Sales open rate", "Sales CTOR"])].copy()
@@ -3211,7 +3213,7 @@ if len(_sales_int):
     )
     _sales_int["month_dt"] = _sales_int["date"].dt.to_period("M").dt.to_timestamp()
 
-    _per_email_path = BASE / "sales_intent_outcomes_per_email.csv"
+    _per_email_path = GENERATED / "sales_intent_outcomes_per_email.csv"
     _sales_int[[
         "date", "subject", "recipients", "opened_n", "clicked_n", "not_clicked_n", "intent_to_action_rate"
     ]].sort_values("date").to_csv(_per_email_path, index=False)
@@ -3335,7 +3337,7 @@ if len(_sales_int):
     body(doc, "14 take points:", bold=True, color=(79, 70, 229))
     bullet(doc, "Most commercial intent is visible at the open stage, but only a subset proceeds to click action.")
     bullet(doc, "The open-to-click conversion lens is the cleanest operational proxy for potential purchase intent conversion.")
-    bullet(doc, "Per-email details are exported for audit at sales_intent_outcomes_per_email.csv.")
+    bullet(doc, "Per-email details are exported for audit at data/generated/sales_intent_outcomes_per_email.csv.")
 
     body(doc,
          "Important caveat: this section measures intent and action proxies (open/click), not confirmed checkout purchases.",

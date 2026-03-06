@@ -47,6 +47,8 @@ import requests
 
 # ─── Constants ────────────────────────────────────────────────────────────────
 BASE = Path(__file__).resolve().parent
+GENERATED = BASE / "data" / "generated"
+GENERATED.mkdir(parents=True, exist_ok=True)
 OUT = BASE / "charts"
 OUT.mkdir(exist_ok=True)
 
@@ -60,8 +62,8 @@ HEADERS = {
 
 START_MONTH = pd.Period("2025-02", freq="M")
 
-CACHE_MONTHLY = BASE / "lead_magnet_group_ab_monthly.csv"
-CACHE_MAPPING = BASE / "lead_magnet_broadcast_mapping.csv"
+CACHE_MONTHLY = GENERATED / "lead_magnet_group_ab_monthly.csv"
+CACHE_MAPPING = GENERATED / "lead_magnet_broadcast_mapping.csv"
 
 GREEN = "#10B981"
 ORANGE = "#F59E0B"
