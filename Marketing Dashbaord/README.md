@@ -31,7 +31,6 @@ Open the local URL shown by Streamlit (usually `http://localhost:8501`).
 ## Notes
 - If needed, set API key via env var:
   - `export KIT_API_KEY="your_key_here"`
-- The app includes a **Refresh now** button to force fresh API pulls.
 - KPI 16 is shown as an unsubscribe-based churn proxy, because true lifecycle churn requires historical state snapshots.
 
 ## Files
