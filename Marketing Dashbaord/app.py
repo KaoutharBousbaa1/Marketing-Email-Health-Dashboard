@@ -338,7 +338,7 @@ def main() -> None:
         "Sales CTOR by segment",
         "Meaning: click-to-open rate for sales emails, split by audience segment.\n"
         "Shows which segments take action after opening.\n"
-        "Formula: sales clicks / sales opens (for each segment), using rolling 30 days.",
+        f"Formula: sales clicks / sales opens (for each segment), using rolling {config.ROLLING_DAYS_SALES_CTOR} days.",
     )
     sales_df = data["kpi3_sales_ctor_by_segment"].copy()
     if len(sales_df):
