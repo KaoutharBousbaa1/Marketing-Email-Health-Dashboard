@@ -348,8 +348,6 @@ def main() -> None:
         st.markdown(
             f"""
 <div class="card">
-  <div>Re-warmed rate = (# subscribers who were cold before the last {config.REWARM_WINDOW_DAYS} days and opened at least one email in the last {config.REWARM_WINDOW_DAYS} days) / (# total current cold subscribers).</div>
-  <br/>
   <div><b>Cold before last {config.REWARM_WINDOW_DAYS} days:</b> {_fmt_int(int(kpi6['cold_before_last30_count']))}</div>
   <div><b>Current cold subscribers (denominator):</b> {_fmt_int(int(kpi6['current_cold_count']))}</div>
   <div><b>Re-warmed subscribers:</b> {_fmt_int(int(kpi6['rewarmed_count']))}</div>
@@ -443,7 +441,8 @@ def main() -> None:
             "conversion_rate": "Conversion rate (%)",
         }
     )
-    st.dataframe(show_conv, use_container_width=True, hide_index=True)
+    with st.expander("Show table", expanded=False):
+        st.dataframe(show_conv, use_container_width=True, hide_index=True)
 
     st.markdown("---")
 
