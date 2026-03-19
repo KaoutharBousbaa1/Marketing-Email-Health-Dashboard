@@ -152,7 +152,8 @@ hr {{ border-color: rgba(255,255,255,0.14); }}
 
 
 @st.cache_data(ttl=120, show_spinner=False)
-def load_dashboard_data() -> dict:
+def load_dashboard_data(cache_bust: str = "") -> dict:
+    _ = cache_bust
     client = KitClient(api_key=config.KIT_API_KEY, api_base=config.KIT_API_BASE)
     service = KPIService(client=client)
     return service.compute_all()
@@ -233,7 +234,7 @@ def main() -> None:
     )
 
     with st.spinner("Loading live data from Kit API..."):
-        data = load_dashboard_data()
+        data = load_dashboard_data(cache_bust=APP_BUILD)
 
     generated_at = data.get("generated_at_utc")
     generated_at_txt = generated_at
