@@ -1,4 +1,0 @@
-metric,pre_window_start,pre_window_end,post_window_start,post_window_end,pre_n_broadcasts,post_n_broadcasts,pre_value,post_value,delta_pp,pre_success,pre_total,post_success,post_total,p_value
-Value open rate,2025-12-18,2026-01-24,2026-01-25,2026-03-02,5,5,53.724802804557406,42.394014962593516,-11.33078784196389,613,1141,170,401,9.459565080362955e-05
-Sales open rate,2025-12-18,2026-01-24,2026-01-25,2026-03-02,0,2,,38.82352941176471,,0,0,66,170,
-Sales CTOR,2025-12-18,2026-01-24,2026-01-25,2026-03-02,0,2,,6.0606060606060606,,0,0,4,66,
