@@ -407,8 +407,6 @@ class KPIService:
         else:
             active_last_6m = set()
 
-        active_total = len(active_last_6m)
-
         # Primary-source attribution: each subscriber is assigned to one source container
         # based on earliest source-tag timestamp (first touch).
         source_order = list(config.ENTRY_SOURCE_TAG_GROUPS.keys())
@@ -437,25 +435,15 @@ class KPIService:
             assigned_by_source[chosen_source].add(email)
             assigned_emails.add(email)
 
+        tagged_total = len(assigned_emails)
         for source_name in source_order:
             members = assigned_by_source.get(source_name, set())
-            share = (len(members) / active_total * 100.0) if active_total > 0 else 0.0
+            share = (len(members) / tagged_total * 100.0) if tagged_total > 0 else 0.0
             source_rows.append(
                 {
                     "source": source_name,
                     "confirmed_subscribers": int(len(members)),
                     "share_pct": round(share, 2),
-                }
-            )
-        other_members = active_last_6m - assigned_emails
-        if len(other_members) > 0:
-            source_rows.append(
-                {
-                    "source": "Other / Not tagged",
-                    "confirmed_subscribers": int(len(other_members)),
-                    "share_pct": round((len(other_members) / active_total * 100.0), 2)
-                    if active_total > 0
-                    else 0.0,
                 }
             )
         source_breakdown_df = pd.DataFrame(source_rows)
