@@ -21,6 +21,7 @@ class SegmentSets:
     active_before_window: set[str]
     workshop_by_tag: dict[str, set[str]]
     mapped_bootcamp_by_workshop: dict[str, set[str]]
+    entry_sources: dict[str, set[str]]
 
 
 class KPIService:
@@ -121,6 +122,9 @@ class KPIService:
         lead_tag_ids: list[int] = []
         workshop_tag_ids: list[int] = []
         bootcamp_tag_ids: list[int] = []
+        source_tag_ids: dict[str, list[int]] = {
+            source: [] for source in config.ENTRY_SOURCE_TAG_GROUPS.keys()
+        }
         workshop_tag_families: dict[int, str] = {}
         bootcamp_tag_to_workshop_family: dict[int, str | None] = {}
 
@@ -143,6 +147,10 @@ class KPIService:
                     lower_name
                 )
 
+            for source_name, patterns in config.ENTRY_SOURCE_TAG_GROUPS.items():
+                if self._contains_any(lower_name, patterns):
+                    source_tag_ids[source_name].append(tag_id)
+
         lead_emails: set[str] = set()
         workshop_emails: set[str] = set()
         bootcamp_emails: set[str] = set()
@@ -150,8 +158,14 @@ class KPIService:
         mapped_bootcamp_by_workshop: dict[str, set[str]] = {
             name: set() for name in self._target_workshop_families()
         }
+        entry_sources: dict[str, set[str]] = {
+            source: set() for source in config.ENTRY_SOURCE_TAG_GROUPS.keys()
+        }
 
-        needed_tag_ids = sorted(set(lead_tag_ids + workshop_tag_ids + bootcamp_tag_ids))
+        source_all_tag_ids = [tid for ids in source_tag_ids.values() for tid in ids]
+        needed_tag_ids = sorted(
+            set(lead_tag_ids + workshop_tag_ids + bootcamp_tag_ids + source_all_tag_ids)
+        )
         tag_members: dict[int, set[str]] = {}
         if needed_tag_ids:
             with ThreadPoolExecutor(max_workers=8) as executor:
@@ -182,6 +196,12 @@ class KPIService:
             if mapped_family in mapped_bootcamp_by_workshop:
                 mapped_bootcamp_by_workshop[mapped_family] |= members
 
+        for source_name, tag_ids in source_tag_ids.items():
+            members: set[str] = set()
+            for tag_id in sorted(set(tag_ids)):
+                members |= tag_members.get(tag_id, set())
+            entry_sources[source_name] = members
+
         active_df = subscribers_df[subscribers_df["state"] == "active"].copy()
         active_all = set(active_df["email"])
 
@@ -199,6 +219,7 @@ class KPIService:
             active_before_window=active_before_window,
             workshop_by_tag=workshop_by_tag,
             mapped_bootcamp_by_workshop=mapped_bootcamp_by_workshop,
+            entry_sources=entry_sources,
         )
 
     def _load_broadcast_stats_df(self, now_utc: datetime) -> pd.DataFrame:
@@ -302,6 +323,64 @@ class KPIService:
             subscribers_df["state"].value_counts().to_dict() if len(subscribers_df) else {}
         )
         kpi14_current_confirmed = int(len(segments.active_all))
+
+        # Confirmed subscribers trend (last N months) + source breakdown
+        active_created_df = subscribers_df[
+            (subscribers_df["state"] == "active") & subscribers_df["created_at"].notna()
+        ].copy()
+        if len(active_created_df):
+            active_created_df["created_at"] = pd.to_datetime(
+                active_created_df["created_at"], utc=True
+            ).dt.tz_convert(None)
+
+        end_month = pd.Timestamp(now_utc.date()).to_period("M")
+        trend_months = [end_month - i for i in range(config.CONFIRMED_TREND_MONTHS - 1, -1, -1)]
+        trend_rows = []
+        for month in trend_months:
+            month_start = month.to_timestamp(how="start")
+            next_month_start = (month + 1).to_timestamp(how="start")
+            if len(active_created_df):
+                created = active_created_df["created_at"]
+                new_confirmed = int(((created >= month_start) & (created < next_month_start)).sum())
+                cumulative_confirmed = int((created < next_month_start).sum())
+            else:
+                new_confirmed = 0
+                cumulative_confirmed = 0
+            trend_rows.append(
+                {
+                    "month": str(month),
+                    "new_confirmed": new_confirmed,
+                    "cumulative_confirmed": cumulative_confirmed,
+                }
+            )
+        confirmed_trend_df = pd.DataFrame(trend_rows)
+
+        source_rows = []
+        active_total = len(segments.active_all)
+        mapped_union: set[str] = set()
+        for source_name in config.ENTRY_SOURCE_TAG_GROUPS.keys():
+            members = segments.entry_sources.get(source_name, set()) & segments.active_all
+            mapped_union |= members
+            share = (len(members) / active_total * 100.0) if active_total > 0 else 0.0
+            source_rows.append(
+                {
+                    "source": source_name,
+                    "confirmed_subscribers": int(len(members)),
+                    "share_pct": round(share, 2),
+                }
+            )
+        other_members = segments.active_all - mapped_union
+        if len(other_members) > 0:
+            source_rows.append(
+                {
+                    "source": "Other / Not tagged",
+                    "confirmed_subscribers": int(len(other_members)),
+                    "share_pct": round((len(other_members) / active_total * 100.0), 2)
+                    if active_total > 0
+                    else 0.0,
+                }
+            )
+        source_breakdown_df = pd.DataFrame(source_rows)
 
         # KPI 19: last 4 completed months snapshot
         snapshot_months = self._completed_months(config.SNAPSHOT_MONTHS, now_utc)
@@ -479,6 +558,8 @@ class KPIService:
         return {
             "generated_at_utc": now_utc.isoformat(),
             "kpi14_current_confirmed": kpi14_current_confirmed,
+            "kpi_confirmed_trend_6m": confirmed_trend_df,
+            "kpi_confirmed_source_breakdown": source_breakdown_df,
             "state_counts": state_counts,
             "segment_sizes": {
                 "lead_magnet": len(segments.lead_magnet),

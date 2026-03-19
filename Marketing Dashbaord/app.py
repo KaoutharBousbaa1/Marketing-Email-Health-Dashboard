@@ -243,6 +243,8 @@ def main() -> None:
         pass
 
     kpi6 = data["kpi6_rewarm"]
+    trend_df = data.get("kpi_confirmed_trend_6m", pd.DataFrame()).copy()
+    source_df = data.get("kpi_confirmed_source_breakdown", pd.DataFrame()).copy()
 
     c1, c2, c3 = st.columns(3)
     with c1:
@@ -270,6 +272,63 @@ def main() -> None:
             "Formula: count(cold_before_last_30d ∩ opened_last_30d).",
         )
     st.caption(f"Last refresh: {generated_at_txt}")
+
+    _section_header(
+        "Confirmed subscribers trend (last 6 months)",
+        "Meaning: monthly trend of confirmed subscribers over the last 6 months.\n"
+        "Shows whether the confirmed audience is growing or slowing.\n"
+        "Formula: cumulative count of active subscribers by month-end; plus monthly new confirmed subscribers.",
+    )
+    if len(trend_df):
+        fig_confirmed = go.Figure()
+        fig_confirmed.add_trace(
+            go.Scatter(
+                x=trend_df["month"],
+                y=trend_df["cumulative_confirmed"],
+                mode="lines+markers",
+                name="Confirmed subscribers (cumulative)",
+                line=dict(color=PURPLE, width=3),
+                marker=dict(size=8),
+                hovertemplate="Month: %{x}<br>Confirmed subscribers: %{y:,}<extra></extra>",
+            )
+        )
+        _chart_template(fig_confirmed)
+        fig_confirmed.update_layout(
+            height=340,
+            yaxis_title="Confirmed subscribers",
+            xaxis_title="Month",
+        )
+        st.plotly_chart(fig_confirmed, use_container_width=True)
+    else:
+        st.info("No confirmed subscriber trend data available yet.")
+
+    st.markdown("##### Source breakdown")
+    if len(source_df):
+        fig_sources = px.bar(
+            source_df,
+            x="source",
+            y="confirmed_subscribers",
+            text="confirmed_subscribers",
+            color="confirmed_subscribers",
+            color_continuous_scale=[[0, PURPLE_LIGHT], [1, PURPLE_DARK]],
+            labels={"source": "Source form", "confirmed_subscribers": "Confirmed subscribers"},
+        )
+        fig_sources.update_traces(texttemplate="%{text:,}", textposition="outside")
+        fig_sources.update_coloraxes(showscale=False)
+        _chart_template(fig_sources)
+        fig_sources.update_layout(height=330)
+        st.plotly_chart(fig_sources, use_container_width=True)
+
+        show_sources = source_df.rename(
+            columns={
+                "source": "Source form",
+                "confirmed_subscribers": "Confirmed subscribers",
+                "share_pct": "Share of confirmed (%)",
+            }
+        )
+        st.dataframe(show_sources, use_container_width=True, hide_index=True)
+    else:
+        st.info("No source breakdown data available yet.")
 
     st.markdown("---")
 

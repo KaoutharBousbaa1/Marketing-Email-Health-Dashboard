@@ -12,6 +12,7 @@ REWARM_WINDOW_DAYS = 30
 COLD_LOOKBACK_DAYS = 90
 SNAPSHOT_MONTHS = 4
 CHURN_MONTHS = 6
+CONFIRMED_TREND_MONTHS = 6
 
 # Broadcast labels from description/internal note
 VALUE_LABEL_KEYWORDS = ["value"]
@@ -48,3 +49,10 @@ BOOTCAMP_TAG_PATTERNS = [
     "ai agent core [",
     "ai agent bootcamp core [",
 ]
+
+# Entry-source containers (how subscribers entered Kit)
+ENTRY_SOURCE_TAG_GROUPS = {
+    "AI Agent Bootcamp Waitlist": ["ai agent bootcamp waitlist"],
+    "AI Livestream Kit": ["ai livestream kit"],
+    "Lead Magnet Roadmap": LEAD_MAGNET_RESPONSE_PATTERNS,
+}
