@@ -356,10 +356,19 @@ class KPIService:
         confirmed_trend_df = pd.DataFrame(trend_rows)
 
         source_rows = []
-        active_total = len(segments.active_all)
+        trend_start_month = trend_months[0]
+        trend_start_ts = trend_start_month.to_timestamp(how="start")
+        if len(active_created_df):
+            active_last_6m = set(
+                active_created_df[active_created_df["created_at"] >= trend_start_ts]["email"].tolist()
+            )
+        else:
+            active_last_6m = set()
+
+        active_total = len(active_last_6m)
         mapped_union: set[str] = set()
         for source_name in config.ENTRY_SOURCE_TAG_GROUPS.keys():
-            members = segments.entry_sources.get(source_name, set()) & segments.active_all
+            members = segments.entry_sources.get(source_name, set()) & active_last_6m
             mapped_union |= members
             share = (len(members) / active_total * 100.0) if active_total > 0 else 0.0
             source_rows.append(
@@ -369,7 +378,7 @@ class KPIService:
                     "share_pct": round(share, 2),
                 }
             )
-        other_members = segments.active_all - mapped_union
+        other_members = active_last_6m - mapped_union
         if len(other_members) > 0:
             source_rows.append(
                 {

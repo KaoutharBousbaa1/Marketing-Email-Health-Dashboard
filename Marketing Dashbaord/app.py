@@ -278,7 +278,8 @@ def main() -> None:
         "Confirmed subscribers trend (last 6 months)",
         "Meaning: monthly trend of confirmed subscribers over the last 6 months.\n"
         "Shows whether the confirmed audience is growing or slowing.\n"
-        "Formula: cumulative count of active subscribers by month-end; plus monthly new confirmed subscribers.",
+        "Formula: cumulative count of active subscribers by month-end; plus monthly new confirmed subscribers.\n"
+        "Source breakdown below uses the same last-6-month confirmed cohort.",
     )
     if len(trend_df):
         fig_confirmed = go.Figure()
