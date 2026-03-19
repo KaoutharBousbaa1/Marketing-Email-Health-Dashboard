@@ -255,7 +255,7 @@ def main() -> None:
         )
     with c2:
         _metric_card(
-            "Cold to re-warmed rate",
+            "Re-warmed rate (%)",
             _fmt_pct(float(kpi6["movement_rate"])),
             f"Meaning: percent of cold subscribers who came back and opened at least one email in the last {config.REWARM_WINDOW_DAYS} days.\n"
             "Shows if re-engagement efforts are working.\n"
@@ -314,7 +314,7 @@ def main() -> None:
 
     # KPI 6
     _section_header(
-        "Cold to re-warmed movement",
+        "Re-warmed rate (%)",
         f"Meaning: how many cold subscribers became active openers again in the last {config.REWARM_WINDOW_DAYS} days.\n"
         "Tracks recovery of disengaged subscribers.\n"
         "Formula: (# subscribers cold before last 30 days and opened in last 30 days) / (# current cold subscribers).",
@@ -337,7 +337,7 @@ def main() -> None:
                         {"range": [60, 100], "color": "rgba(91,33,182,0.38)"},
                     ],
                 },
-                title={"text": "Re-warmed Rate"},
+                title={"text": "Re-warmed rate (%)"},
             )
         )
         _chart_template(gauge)
@@ -348,13 +348,12 @@ def main() -> None:
         st.markdown(
             f"""
 <div class="card">
-  <div class="card-title">Definition used</div>
   <div>Re-warmed rate = (# subscribers who were cold before the last {config.REWARM_WINDOW_DAYS} days and opened at least one email in the last {config.REWARM_WINDOW_DAYS} days) / (# total current cold subscribers).</div>
   <br/>
   <div><b>Cold before last {config.REWARM_WINDOW_DAYS} days:</b> {_fmt_int(int(kpi6['cold_before_last30_count']))}</div>
   <div><b>Current cold subscribers (denominator):</b> {_fmt_int(int(kpi6['current_cold_count']))}</div>
   <div><b>Re-warmed subscribers:</b> {_fmt_int(int(kpi6['rewarmed_count']))}</div>
-  <div><b>Movement rate:</b> {_fmt_pct(float(kpi6['movement_rate']))}</div>
+  <div><b>Re-warmed rate:</b> {_fmt_pct(float(kpi6['movement_rate']))}</div>
 </div>
             """,
             unsafe_allow_html=True,
