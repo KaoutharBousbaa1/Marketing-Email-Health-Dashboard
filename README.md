@@ -38,6 +38,7 @@ python3 analysis_cold_engagement.py
 python3 analysis_cold_subscribers.py
 python3 analysis_sales_vs_value.py
 python3 analysis_phase_lifespan.py
+python3 analysis_campaign_math_check.py
 ```
 
 This team workflow intentionally **does not** generate a Word report.
@@ -66,6 +67,8 @@ Do not rename these files, because scripts read them by exact name.
   - `data/generated/signup_cohort_monthly_evolution.csv`
   - `data/generated/bootcamp_buyers_monthly_evolution.csv`
   - `data/generated/bootcamp_buyers_summary.csv`
+- Campaign math checks:
+  - `data/generated/campaign_math_check_summary.csv`
 - Cold subscriber outputs:
   - `data/generated/cold_engagement.csv`
 - Charts:
@@ -109,6 +112,7 @@ If the key changes, update `API_KEY` in:
 | `analysis_cold_subscribers.py` | Analysis/charts of cold-subscriber age/source composition | `Cold Subscribers.csv` | cold subscriber charts |
 | `analysis_sales_vs_value.py` | Sales vs Value category trend analysis | `Emails Broadcasting - broadcasts_categorised.csv` | category trend charts |
 | `analysis_phase_lifespan.py` | Unsubscribe lifespan by phase analysis | `export (22).csv` | phase-lifespan charts |
+| `analysis_campaign_math_check.py` | Verifies denominator/numerator math for campaign claims (ex: recipients vs roadmap-tagged subset) | `Emails Broadcasting - broadcasts_categorised.csv`, `Confirmed Subscribers.csv` | `data/generated/campaign_math_check_summary.csv` |
 
 ## 9) CSV file catalog
 
@@ -135,6 +139,7 @@ If the key changes, update `API_KEY` in:
 | `data/generated/bootcamp_buyers_summary.csv` | Overall buyer vs non-buyer benchmark metrics | `analysis_bootcamp_buyers.py` | team review / downstream analysis |
 | `data/generated/bootcamp_conversion_latency.csv` | Days from signup to first bootcamp purchase per buyer | legacy report build | reference only |
 | `data/generated/bootcamp_conversion_latency_by_cohort.csv` | Conversion latency aggregated by first purchase cohort | legacy report build | reference only |
+| `data/generated/campaign_math_check_summary.csv` | Campaign denominator/numerator checks for the bootcamp invite vs roadmap-tag subsets | `analysis_campaign_math_check.py` | team review / QA |
 | `data/generated/cold_engagement.csv` | Cold subscriber engagement stats from Kit API | `fetch_cold_engagement.py` | `analysis_cold_engagement.py` |
 | `data/generated/failed_broadcasts_filter500.csv` | Diagnostic list of broadcasts with API filter 500 failures | manual/diagnostic artifact | reference only |
 | `data/generated/lead_magnet_broadcast_mapping.csv` | Mapped broadcast IDs for categorized emails | `analysis_group_ab_monthly.py` | `analysis_signup_cohort_evolution.py`, `analysis_bootcamp_buyers.py`, `analysis_lead_magnet_origin_post.py` |

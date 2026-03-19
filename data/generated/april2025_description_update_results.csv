@@ -1,0 +1,24 @@
+broadcast_id,date,subject,old_description,new_description,status,http_status
+18795726,2025-04-03,A tiny life change that’s made me more productive,Pre-Sales,Pre-Sales,skipped_already_set,
+18795741,2025-04-05,An unconventional book on making better AI agents,Pre-Sales,Pre-Sales,skipped_already_set,
+18795752,2025-04-15,Struggling to keep up with AI? Do this instead:,Pre-Sales,Pre-Sales,skipped_already_set,
+19010267,2025-04-08,Leaked AI memo from Shopify CEO,Pre-Sales,Pre-Sales,skipped_already_set,
+19010338,2025-04-08,Leaked AI memo from Shopify CEO,Pre-Sales,Pre-Sales,skipped_already_set,
+19021920,2025-04-10,How to code using AI,Livestream,Livestream,skipped_already_set,
+19021981,2025-04-12,Vibe Coding 101 workshop happening today,,Livestream,"error:{""errors"":[""Broadcast has already been sent.""]}",422
+19096531,2025-04-15,Struggling to keep up with AI? Do this instead:,Pre-Sales,Pre-Sales,skipped_already_set,
+19127760,2025-04-17,How to build AI agents,,Livestream,"error:{""errors"":[""Broadcast has already been sent.""]}",422
+19139917,2025-04-18,The top 3 mistakes people make building AI agents,,Pre-Sales,"error:{""errors"":[""Broadcast has already been sent.""]}",422
+19140505,2025-04-18,The top 3 mistakes people make building AI agents,,Pre-Sales,"error:{""errors"":[""Broadcast has already been sent.""]}",422
+19151050,2025-04-19,🐙 Livestream Delayed By 24 Hours,,Livestream,"error:{""errors"":[""Broadcast has already been sent.""]}",422
+19163995,2025-04-21,I need to apologize in advance,,Pre-Sales,"error:{""errors"":[""Broadcast has already been sent.""]}",422
+19164118,2025-04-21,I need to apologize in advance,,Pre-Sales,"error:{""errors"":[""Broadcast has already been sent.""]}",422
+19178556,2025-04-22,Why I’m launching the AI Agent Bootcamp,Post-Sales,Post-Sales,skipped_already_set,
+19178561,2025-04-22,Your early-bird invite is enclosed inside,,Launch Email (Cohort),"error:{""errors"":[""Broadcast has already been sent.""]}",422
+19183929,2025-04-22,Important update…,,Post-Sales,"error:{""errors"":[""Broadcast has already been sent.""]}",422
+19192622,2025-04-23,Why I’m launching the AI Agent Bootcamp,Post-Sales,Post-Sales,skipped_already_set,
+19192753,2025-04-23,Here’s what’s happening tomorrow...,,Post-Sales,"error:{""errors"":[""Broadcast has already been sent.""]}",422
+19197780,2025-04-23,quick heads up...,,Post-Sales,"error:{""errors"":[""Broadcast has already been sent.""]}",422
+19206672,2025-04-24,5 spots left...,,Post-Sales,"error:{""errors"":[""Broadcast has already been sent.""]}",422
+19207910,2025-04-24,I have bad news,,Post-Sales,"error:{""errors"":[""Broadcast has already been sent.""]}",422
+19250428,2025-04-28,You’ve blown me away!,Value,Value,skipped_already_set,

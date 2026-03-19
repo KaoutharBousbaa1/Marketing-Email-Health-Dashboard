@@ -1,0 +1,18 @@
+context,metric,count,denominator_recipients,rate_vs_recipients_pct,delta_vs_claimed_count,definition
+campaign_info,campaign_recipients,8930,8930,100.0,7364,Recipients for 'Your private invite to join the AI Agent Bootcamp' on 2026-02-17 16:00:14
+as_of_send_date,waitlist_total,9262,8930,103.72,7696,Tag contains 'AI Agent Bootcamp Waitlist'
+as_of_send_date,waitlist_and_sent_survey_tag,1520,8930,17.02,-46,Waitlist + 'Been Sent 2025 Roadmap Survey'
+as_of_send_date,waitlist_and_(sent_or_voted_roadmap),1693,8930,18.96,127,Waitlist + ('Been Sent...' OR 'Voted: 28-Day AI Sprint Roadmap')
+as_of_send_date,waitlist_and_goal_response_tags,905,8930,10.13,-661,Waitlist + one of the 5 roadmap goal-response tags
+as_of_send_date,waitlist_and_goal_response_and_roadmap_referrer,14,8930,0.16,-1552,Waitlist + goal-response tag + roadmap referrer
+as_of_send_date,all_subscribers_and_goal_response_tags,1320,8930,14.78,-246,All confirmed subscribers with one of 5 roadmap goal-response tags
+as_of_send_date,all_subscribers_and_roadmap_referrer,97,8930,1.09,-1469,All confirmed subscribers with roadmap referrer
+as_of_send_date,claimed_numerator_input,1566,8930,17.54,0,"Manual claimed numerator (default=1,566)"
+full_snapshot,waitlist_total,9623,8930,107.76,8057,Tag contains 'AI Agent Bootcamp Waitlist'
+full_snapshot,waitlist_and_sent_survey_tag,1520,8930,17.02,-46,Waitlist + 'Been Sent 2025 Roadmap Survey'
+full_snapshot,waitlist_and_(sent_or_voted_roadmap),1693,8930,18.96,127,Waitlist + ('Been Sent...' OR 'Voted: 28-Day AI Sprint Roadmap')
+full_snapshot,waitlist_and_goal_response_tags,977,8930,10.94,-589,Waitlist + one of the 5 roadmap goal-response tags
+full_snapshot,waitlist_and_goal_response_and_roadmap_referrer,15,8930,0.17,-1551,Waitlist + goal-response tag + roadmap referrer
+full_snapshot,all_subscribers_and_goal_response_tags,1497,8930,16.76,-69,All confirmed subscribers with one of 5 roadmap goal-response tags
+full_snapshot,all_subscribers_and_roadmap_referrer,147,8930,1.65,-1419,All confirmed subscribers with roadmap referrer
+full_snapshot,claimed_numerator_input,1566,8930,17.54,0,"Manual claimed numerator (default=1,566)"
