@@ -304,7 +304,12 @@ def main() -> None:
     else:
         st.info("No confirmed subscriber trend data available yet.")
 
-    st.markdown("##### Source breakdown")
+    _section_header(
+        "Source breakdown",
+        "Meaning: confirmed subscribers split by entry form source over the same last 6 months window.\n"
+        "Shows which source is bringing the most confirmed subscribers.\n"
+        "Formula: count(active subscribers in last 6 months with source-tag container) by source; share = source count / total confirmed in last 6 months.",
+    )
     if len(source_df):
         fig_sources = px.bar(
             source_df,
