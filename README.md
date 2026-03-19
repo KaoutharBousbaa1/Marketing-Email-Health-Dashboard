@@ -2,8 +2,6 @@
 
 This repository contains the analysis scripts and CSV data used for the LO email health audit.
 
-## Can my teammate run this after cloning?
-Yes. If they have Python 3.10+ and internet access, they can run everything from this folder.
 
 ## 1) Setup (one time)
 
