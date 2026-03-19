@@ -22,6 +22,7 @@ class SegmentSets:
     workshop_by_tag: dict[str, set[str]]
     mapped_bootcamp_by_workshop: dict[str, set[str]]
     entry_sources: dict[str, set[str]]
+    entry_source_tagged_at: dict[str, dict[str, str]]
 
 
 class KPIService:
@@ -98,6 +99,15 @@ class KPIService:
         except ValueError:
             return None
 
+    @staticmethod
+    def _iso_key(value: str | None) -> tuple[int, datetime | None, str]:
+        if not value:
+            return (1, None, "")
+        dt = KPIService._to_dt(value)
+        if dt is None:
+            return (1, None, value)
+        return (0, dt, value)
+
     def _load_subscribers_df(self) -> pd.DataFrame:
         subs = self.client.list_subscribers(status="all")
         rows = []
@@ -161,6 +171,9 @@ class KPIService:
         entry_sources: dict[str, set[str]] = {
             source: set() for source in config.ENTRY_SOURCE_TAG_GROUPS.keys()
         }
+        entry_source_tagged_at: dict[str, dict[str, str]] = {
+            source: {} for source in config.ENTRY_SOURCE_TAG_GROUPS.keys()
+        }
 
         source_all_tag_ids = [tid for ids in source_tag_ids.values() for tid in ids]
         needed_tag_ids = sorted(
@@ -202,6 +215,34 @@ class KPIService:
                 members |= tag_members.get(tag_id, set())
             entry_sources[source_name] = members
 
+        # Pull tag timestamps for source tags to support first-touch attribution.
+        source_tag_unique_ids = sorted({tid for ids in source_tag_ids.values() for tid in ids})
+        source_tag_email_tagged_at: dict[int, dict[str, str]] = {}
+        if source_tag_unique_ids:
+            with ThreadPoolExecutor(max_workers=min(8, len(source_tag_unique_ids))) as executor:
+                future_map = {
+                    executor.submit(self.client.list_tag_subscribers_with_tagged_at, tag_id): tag_id
+                    for tag_id in source_tag_unique_ids
+                }
+                for future in as_completed(future_map):
+                    tag_id = future_map[future]
+                    try:
+                        source_tag_email_tagged_at[tag_id] = future.result()
+                    except Exception:
+                        source_tag_email_tagged_at[tag_id] = {}
+
+        for source_name, tag_ids in source_tag_ids.items():
+            email_to_first: dict[str, str] = {}
+            for tag_id in sorted(set(tag_ids)):
+                tagged_map = source_tag_email_tagged_at.get(tag_id, {})
+                for email, tagged_at in tagged_map.items():
+                    prev = email_to_first.get(email, "")
+                    if tagged_at and (not prev or tagged_at < prev):
+                        email_to_first[email] = tagged_at
+                    elif email not in email_to_first:
+                        email_to_first[email] = tagged_at
+            entry_source_tagged_at[source_name] = email_to_first
+
         active_df = subscribers_df[subscribers_df["state"] == "active"].copy()
         active_all = set(active_df["email"])
 
@@ -220,6 +261,7 @@ class KPIService:
             workshop_by_tag=workshop_by_tag,
             mapped_bootcamp_by_workshop=mapped_bootcamp_by_workshop,
             entry_sources=entry_sources,
+            entry_source_tagged_at=entry_source_tagged_at,
         )
 
     def _load_broadcast_stats_df(self, now_utc: datetime) -> pd.DataFrame:
@@ -366,10 +408,37 @@ class KPIService:
             active_last_6m = set()
 
         active_total = len(active_last_6m)
-        mapped_union: set[str] = set()
-        for source_name in config.ENTRY_SOURCE_TAG_GROUPS.keys():
-            members = segments.entry_sources.get(source_name, set()) & active_last_6m
-            mapped_union |= members
+
+        # Primary-source attribution: each subscriber is assigned to one source container
+        # based on earliest source-tag timestamp (first touch).
+        source_order = list(config.ENTRY_SOURCE_TAG_GROUPS.keys())
+        assigned_by_source: dict[str, set[str]] = {name: set() for name in source_order}
+        assigned_emails: set[str] = set()
+
+        for email in active_last_6m:
+            candidates: list[tuple[tuple[int, datetime | None, str], str]] = []
+            for source_name in source_order:
+                tagged_map = segments.entry_source_tagged_at.get(source_name, {})
+                if email in tagged_map:
+                    candidates.append((self._iso_key(tagged_map.get(email)), source_name))
+                elif email in segments.entry_sources.get(source_name, set()):
+                    # Fallback when tagged_at is missing: still allow source assignment,
+                    # but rank after real timestamps.
+                    candidates.append(((2, None, ""), source_name))
+
+            if not candidates:
+                continue
+
+            # Sort by (has_timestamp, timestamp, original value) then source order.
+            candidates.sort(
+                key=lambda item: (item[0], source_order.index(item[1]))
+            )
+            chosen_source = candidates[0][1]
+            assigned_by_source[chosen_source].add(email)
+            assigned_emails.add(email)
+
+        for source_name in source_order:
+            members = assigned_by_source.get(source_name, set())
             share = (len(members) / active_total * 100.0) if active_total > 0 else 0.0
             source_rows.append(
                 {
@@ -378,7 +447,7 @@ class KPIService:
                     "share_pct": round(share, 2),
                 }
             )
-        other_members = active_last_6m - mapped_union
+        other_members = active_last_6m - assigned_emails
         if len(other_members) > 0:
             source_rows.append(
                 {

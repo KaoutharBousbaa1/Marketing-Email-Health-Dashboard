@@ -308,7 +308,7 @@ def main() -> None:
         "Source breakdown",
         "Meaning: confirmed subscribers split by entry form source over the same last 6 months window.\n"
         "Shows which source is bringing the most confirmed subscribers.\n"
-        "Formula: count(active subscribers in last 6 months with source-tag container) by source; share = source count / total confirmed in last 6 months.",
+        "Formula: for each confirmed subscriber in the last 6 months, assign one primary source based on the earliest source-tag date (if multiple source tags exist, first tag wins), then count by source; share = source count / total confirmed in last 6 months.",
     )
     if len(source_df):
         fig_sources = px.bar(

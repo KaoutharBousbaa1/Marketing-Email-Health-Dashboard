@@ -115,6 +115,22 @@ class KitClient:
         }
         return emails
 
+    def list_tag_subscribers_with_tagged_at(self, tag_id: int) -> dict[str, str]:
+        subs = self._paginate_get(f"/tags/{tag_id}/subscribers", root_key="subscribers", per_page=1000)
+        out: dict[str, str] = {}
+        for s in subs:
+            email = str(s.get("email_address", "")).strip().lower()
+            if not email:
+                continue
+            tagged_at = str(s.get("tagged_at") or "").strip()
+            if email not in out:
+                out[email] = tagged_at
+            else:
+                prev = out[email]
+                if tagged_at and (not prev or tagged_at < prev):
+                    out[email] = tagged_at
+        return out
+
     def get_broadcast_stats(self, broadcast_id: int) -> dict[str, Any]:
         resp = self._request("GET", f"/broadcasts/{broadcast_id}/stats")
         if resp.status_code != 200:
