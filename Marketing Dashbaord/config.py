@@ -19,8 +19,6 @@ VALUE_LABEL_KEYWORDS = ["value"]
 SALES_LABEL_KEYWORDS = [
     "pre-sales",
     "post-sales",
-    "sales",
-    "hype email",
     "launch email",
     "launch",
     "pre-launch-workshop",
